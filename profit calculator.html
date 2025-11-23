@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Profit Calculator</title>
+
+  <!-- Tu CSS -->
+  <link rel="stylesheet" type="text/css" href="styles profit.calculator.css">
+
+  <!-- Estilo rápido solo para el botón (por si el CSS principal no lo toma) -->
+  <style>
+    .navButton {
+      display: inline-block;
+      padding: 12px 18px;
+      background-color: #165bdb;
+      color: #ffffff !important;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s;
+      margin-bottom: 16px;
+      margin-top: 10px;
+    }
+    .navButton:hover {
+      background-color: #ffa012 !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 🔵 BOTÓN PARA VOLVER AL INDEX -->
+   <ul>
+        
+        <li><a href="profit.calculator.html">Calculadora</a></li>
+    </ul>
+
+  <h1>Profit calculator</h1>
+  <p class="small">Introduce tu cantidad, precio de compra y precio actual. Los cálculos se actualizan automáticamente.</p>
+
+  <div class="controls">
+    <button id="addRow">➕ Añadir fila</button>
+    <button id="removeRow">➖ Quitar última</button>
+    <button id="reset">♻️ Limpiar todo</button>
+    <button id="export">⬇️ Exportar CSV</button>
+  </div>
+
+  <table id="portfolio">
+    <thead>
+      <tr>
+        <th>Ticker / Nombre</th>
+        <th>Cantidad</th>
+        <th>Precio compra</th>
+        <th>Precio actual</th>
+        <th>Coste total</th>
+        <th>Valor actual</th>
+        <th>P/L</th>
+        <th>% P/L</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+
+    <tfoot>
+      <tr>
+        <td>Total</td>
+        <td id="totalQty">—</td>
+        <td id="totalCost">—</td>
+        <td id="totalValue">—</td>
+        <td id="grandCost">—</td>
+        <td id="grandValue">—</td>
+        <td id="grandPL">—</td>
+        <td id="grandPct">—</td>
+      </tr>
+    </tfoot>
+  </table>
+
+<script>
+(function(){
+  const tbody = document.querySelector('#portfolio tbody');
+  const addBtn = document.getElementById('addRow');
+  const removeBtn = document.getElementById('removeRow');
+  const resetBtn = document.getElementById('reset');
+  const exportBtn = document.getElementById('export');
+
+  function fmt(n){
+    if (isNaN(n) || !isFinite(n)) return '—';
+    return Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+
+  function createRow(ticker='', qty='', buy='', cur=''){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" class="ticker" value="${ticker}" placeholder="AAPL / SPY"></td>
+      <td><input type="number" step="any" min="0" class="qty" value="${qty}"></td>
+      <td><input type="number" step="any" min="0" class="buy" value="${buy}"></td>
+      <td><input type="number" step="any" min="0" class="cur" value="${cur}"></td>
+      <td class="cost">—</td>
+      <td class="value">—</td>
+      <td class="pl">—</td>
+      <td class="pct">—</td>
+    `;
+    ['qty','buy','cur'].forEach(c=>{
+      tr.querySelector('.' + c).addEventListener('input', calculate);
+    });
+    tbody.appendChild(tr);
+    return tr;
+  }
+
+  function calculate(){
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    let totalQty = 0, totalCost = 0, totalValue = 0;
+
+    rows.forEach(tr=>{
+      const q = parseFloat(tr.querySelector('.qty').value) || 0;
+      const buy = parseFloat(tr.querySelector('.buy').value) || 0;
+      const cur = parseFloat(tr.querySelector('.cur').value) || 0;
+
+      const cost = q * buy;
+      const value = q * cur;
+      const pl = value - cost;
+      const pct = cost === 0 ? NaN : (pl / cost) * 100;
+
+      tr.querySelector('.cost').textContent = fmt(cost);
+      tr.querySelector('.value').textContent = fmt(value);
+
+      const plCell = tr.querySelector('.pl');
+      plCell.textContent = fmt(pl);
+      plCell.className = 'pl ' + (pl>0 ? 'pos' : (pl<0 ? 'neg' : ''));
+
+      const pctCell = tr.querySelector('.pct');
+      pctCell.textContent = isNaN(pct) ? '—' : fmt(pct) + ' %';
+      pctCell.className = 'pct ' + (pct>0 ? 'pos' : (pct<0 ? 'neg' : ''));
+
+      totalQty += q;
+      totalCost += cost;
+      totalValue += value;
+    });
+
+    const grandPL = totalValue - totalCost;
+    const grandPct = totalCost === 0 ? NaN : (grandPL / totalCost) * 100;
+
+    document.getElementById('totalQty').textContent = totalQty || '—';
+    document.getElementById('totalCost').textContent = fmt(totalCost);
+    document.getElementById('totalValue').textContent = fmt(totalValue);
+    document.getElementById('grandCost').textContent = fmt(totalCost);
+    document.getElementById('grandValue').textContent = fmt(totalValue);
+
+    const gPLCell = document.getElementById('grandPL');
+    gPLCell.textContent = fmt(grandPL);
+    gPLCell.className = (grandPL>0 ? 'pos' : (grandPL<0 ? 'neg' : ''));
+
+    const gPctCell = document.getElementById('grandPct');
+    gPctCell.textContent = isNaN(grandPct) ? '—' : fmt(grandPct) + ' %';
+    gPctCell.className = (grandPct>0 ? 'pos' : (grandPct<0 ? 'neg' : ''));
+  }
+
+  addBtn.addEventListener('click', createRow);
+  removeBtn.addEventListener('click', ()=>{
+    const last = tbody.querySelector('tr:last-child');
+    if (last) last.remove();
+    calculate();
+  });
+  resetBtn.addEventListener('click', ()=>{
+    tbody.innerHTML = '';
+    calculate();
+  });
+
+  exportBtn.addEventListener('click', ()=>{
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    if (!rows.length) { alert('No hay filas para exportar.'); return; }
+
+    const lines = [['ticker','cantidad','compra','actual','coste','valor','pl','pct']];
+    rows.forEach(tr=>{
+      const ticker = tr.querySelector('.ticker').value || '';
+      const q = parseFloat(tr.querySelector('.qty').value) || 0;
+      const buy = parseFloat(tr.querySelector('.buy').value) || 0;
+      const cur = parseFloat(tr.querySelector('.cur').value) || 0;
+      const cost = q * buy;
+      const value = q * cur;
+      const pl = value - cost;
+      const pct = cost === 0 ? '' : ((pl/cost)*100).toFixed(2) + '%';
+      lines.push([ticker,q,buy,cur,cost,value,pl,pct].join(','));
+    });
+
+    const csv = lines.join('\n');
+    const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url; a.download = 'portfolio.csv';
+    document.body.appendChild(a); a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
+  });
+
+  createRow('AAPL',1,150,170);
+  createRow('SPY',2,430,450);
+  calculate();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+/* ===========================
+   styles-profit-calculator.css
+   Archivo limpio y profesional
+   =========================== */
+
+/* Variables de color y tipografía */
+:root{
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 14px;
+
+  --primary-blue: #fc5d00;
+  --accent-blue: #fc5d00;
+  --menu-text: #0f0700;
+  --hover-bg: #ffa012;
+  --hover-text: #ffffff;
+  --active-border: #780a0a;
+
+  --button-blue: #165bdb;
+}
+
+/* Reset */
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; height:100%; }
+
+/* Fondo */
+body{
+  background-color: var(--accent-blue);
+  background-image: url("bkg.png");
+  background-size: cover;
+  background-position: center;
+  padding:20px;
+  color:#000;
+}
+
+/* Títulos */
+h1{
+  color: var(--primary-blue);
+  font-family: "Bebas Neue", sans-serif;
+  text-align:center;
+  font-size:36px;
+  margin:12px 0 18px;
+}
+
+h3{
+  color: var(--primary-blue);
+  text-align:center;
+  margin:8px 0;
+}
+
+/* Texto */
+p{ color:#000; margin:8px 0; }
+.redParagraph{ color:#ff0000; }
+
+/* Imágenes */
+img{
+  border-radius:25px;
+  max-width:100%;
+  height:auto;
+  transition:.18s;
+}
+img:hover{
+  border-radius:30px;
+  opacity:.85;
+}
+
+/* ===========================
+   MENÚ PRINCIPAL
+   =========================== */
+
+ul{
+  list-style:none;
+  margin:0 0 18px 0;
+  padding:0;
+  display:flex;
+  gap:8px;
+  justify-content:center;
+}
+
+ul li a{
+  display:inline-block;
+  min-width:75px;
+  padding:12px 18px;
+  color:var(--menu-text);
+  background: transparent;
+  font-weight:600;
+  border-radius:6px;
+  text-decoration:none;
+  text-align:center;
+  transition:.15s;
+}
+
+ul li a:hover{
+  background:var(--hover-bg);
+  color:var(--hover-text);
+  transform: translateY(-2px);
+}
+
+ul li a.active{
+  background:var(--hover-bg);
+  color:var(--hover-text);
+  border-bottom:5px solid var(--active-border);
+}
+
+/* ===========================
+   BOTÓN DE NAVEGACIÓN (VOLVER)
+   =========================== */
+
+.navButton{
+    display:inline-block;
+    padding:12px 18px;
+    background: var(--button-blue);
+    color: #ffffff !important;
+    font-weight:bold;
+    border-radius:8px;
+    text-decoration:none !important;
+    transition:.3s;
+}
+
+.navButton:hover{
+    background: var(--hover-bg) !important;
+    color:#ffffff !important;
+}
+
+/* ===========================
+   TABLAS
+   =========================== */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:rgba(255,255,255,0.95);
+  margin-top:12px;
+}
+
+th,td{
+  padding:8px;
+  border:1px solid #ddd;
+  text-align:right;
+}
+
+th:first-child,
+td:first-child{
+  text-align:left;
+}
+
+input[type="number"],
+input[type="text"]{
+  width:100%;
+  padding:6px;
+  border:1px solid #ccc;
+  border-radius:4px;
+}
+
+.pos{ color:green; }
+.neg{ color:red; }
+
+tfoot td{
+  background:#fafafa;
+  font-weight:bold;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+@media (max-width:640px){
+  ul{ flex-wrap:wrap; gap:6px; }
+  ul li a{ padding:10px 12px; min-width:60px; font-size:14px; }
+  h1{ font-size:28px; }
+  table{ font-size:13px; }
+ul li a {
+    color: white;   /* <-- ESTA LÍNEA LO ARREGLA */
+}
+ul li a {
+    text-decoration: none;
+    display: inline-block;
+    min-width: 75px;
+    padding: 12px 18px;
+    color: white;              /* ← texto blanco SIEMPRE */
+    font-weight: 600;
+    border-radius: 6px;
+    transition: .15s;
+    text-align: center;
+}
+body {
+    background-color: #456cf7;
+    background-image: url(bkg.png);
+}
+
+h1 {
+    color: #040f4a;
+    font-family: Bebas Neue;
+    text-align: center;
+}
+
+p {
+    color: #000;
+}
+
+img {
+    border-radius: 25px;
+}
+
+img:hover {
+    border-radius: 30px;
+    opacity: 0.85;
+}
+
+ul {
+    list-style-type: none;
+    overflow: hidden;
+    padding: 0;
+}
+
+ul li {
+    float: left;
+    text-align: center;
+}
+
+ul li a {
+    text-decoration: none;
+    display: block;
+    padding: 14px 15px;
+    width: 110px;
+    color: #165bdb;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* Hover amarillo */
+ul li a:hover {
+    background-color: #ffa012;
+    color: white;
+    border-radius: 8px;
+}
+
+/* Botón activo */
+.active {
+    border-bottom: solid 5px #780a0a;
+}
+
+
